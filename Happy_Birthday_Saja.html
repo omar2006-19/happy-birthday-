@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>رحلة حب سجى</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+    
+    :root {
+      --primary: #800020;
+      --secondary: #A31621;
+      --accent: #E0115F;
+      --text: #fff;
+      --soft-pink: #FFD1DC;
+      --light-pink: #FFB6C1;
+    }
+    
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--text);
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    .page {
+      display: none;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .active {
+      display: block;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 30px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+    
+    button {
+      padding: 12px 25px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    .yes-btn {
+      background: linear-gradient(45deg, var(--accent), var(--secondary));
+      color: white;
+    }
+    
+    .no-btn {
+      background: rgba(255,255,255,0.2);
+      color: white;
+    }
+    
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    }
+    
+    .question {
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 15px;
+      margin: 20px 0;
+      backdrop-filter: blur(5px);
+    }
+    
+    .answers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .answer-btn {
+      padding: 10px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: all 0.3s;
+    }
+    
+    .answer-btn:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    
+    .correct {
+      background: #4CAF50 !important;
+      box-shadow: 0 0 10px #4CAF50;
+    }
+    
+    .wrong {
+      background: #f44336 !important;
+      box-shadow: 0 0 10px #f44336;
+    }
+    
+    .emoji {
+      font-size: 3rem;
+      margin: 20px 0;
+      animation: bounce 0.8s infinite alternate;
+    }
+    
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-15px); }
+    }
+    
+    .progress-bar {
+      height: 8px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 4px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+    
+    .progress {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--secondary));
+      width: 0%;
+      transition: width 0.5s;
+    }
+    
+    .special-page {
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 15px;
+      margin: 20px 0;
+      backdrop-filter: blur(5px);
+    }
+    
+    .message {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      margin: 20px 0;
+    }
+    
+    .countdown-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+    }
+    
+    .countdown-circle {
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle, var(--light-pink), var(--accent));
+      box-shadow: 0 0 30px rgba(255, 182, 193, 0.6);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .countdown-number {
+      font-size: 5rem;
+      font-weight: bold;
+      color: white;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      z-index: 2;
+      transition: transform 0.3s;
+    }
+    
+    .countdown-text {
+      font-size: 1.5rem;
+      margin-top: 10px;
+      color: white;
+      z-index: 2;
+    }
+    
+    .circle-pulse {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      animation: pulse 2s infinite;
+      z-index: 1;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(0.8); opacity: 0.7; }
+      70% { transform: scale(1.3); opacity: 0; }
+      100% { transform: scale(0.8); opacity: 0; }
+    }
+    
+    .floating-petal {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="%23ffffff" d="M50 0 Q60 40 80 50 Q60 60 50 100 Q40 60 20 50 Q40 40 50 0" opacity="0.7"/></svg>');
+      background-size: contain;
+      opacity: 0;
+      z-index: 1;
+      animation: floatDown 5s linear infinite;
+    }
+    
+    @keyframes floatDown {
+      0% { transform: translateY(-100px) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.7; }
+      90% { opacity: 0.7; }
+      100% { transform: translateY(400px) rotate(360deg); opacity: 0; }
+    }
+    
+    .sparkle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background-color: white;
+      border-radius: 50%;
+      opacity: 0;
+      animation: sparkle 1.5s ease-out infinite;
+    }
+    
+    @keyframes sparkle {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1); opacity: 0.8; }
+      100% { transform: scale(0); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- الصفحة الرئيسية -->
+  <div id="mainPage" class="page active">
+    <h1>سجى.. هل تحبيني؟ 💜</h1>
+    <div class="buttons">
+      <button class="yes-btn" id="yesBtn">نعم</button>
+      <button class="no-btn" id="noBtn">لا</button>
+    </div>
+  </div>
+
+  <!-- صفحة الأسئلة -->
+  <div id="quizPage" class="page">
+    <h1>اختبار حب سجى 💘</h1>
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div id="qCounter">السؤال 1 من 7</div>
+    
+    <div class="question" id="q1">
+      <p>1. كم عمري؟</p>
+      <div class="answers">
+        <button class="answer-btn" data-correct="true">19</button>
+        <button class="answer-btn">18</button>
+      </div>
+    </div>
+    
+    <div class="question" id="q2" style="display:none">
+      <p>2. ما هو لوني المفضل؟</p>
+      <div class="answers">
+        <button class="answer-btn" data-correct="true">البنفسجي</button>
+        <button class="answer-btn">الوردي</button>
+      </div>
+    </div>
+    
+    <div class="question" id="q3" style="display:none">
+      <p>3. هل أنا شخص مميز في حياتك؟</p>
+      <div class="answers">
+        <button class="answer-btn" data-correct="true">نعم</button>
+        <button class="answer-btn">لا</button>
+      </div>
+    </div>
+    
+    <div class="question" id="q4" style="display:none">
+      <p>4. هل ما زلت أفكر في فرح ورؤيا؟</p>
+      <div class="answers">
+        <button class="answer-btn" data-correct="true">لا</button>
+        <button class="answer-btn">نعم</button>
+      </div>
+    </div>
+    
+    <div class="question" id="q5" style="display:none">
+      <p>5. من أحب أكثر؟</p>
+      <div class="answers">
+        <button class="answer-btn" data-correct="true">رونالدو</button>
+        <button class="answer-btn">سجى</button>
+      </div>
+    </div>
+    
+    <div class="question" id="q6" style="display:none">
+      <p>6. ما هو أفضل تاريخ لنا؟</p>
+      <div class="answers">
+        <button class="answer-btn" data-correct="true">5/10</button>
+        <button class="answer-btn">2/7</button>
+      </div>
+    </div>
+    
+    <div class="question" id="q7" style="display:none">
+      <p>7. تعتقدين في شخص بحياتي غيرك؟</p>
+      <div class="answers">
+        <button class="answer-btn" data-correct="true">لا</button>
+        <button class="answer-btn">نعم</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- صفحة النجاح -->
+  <div id="successPage" class="page">
+    <div class="emoji">💖</div>
+    <h1>أحسنتي سجى!</h1>
+    <div class="message">لقد اجتزتِ الاختبار بنجاح!</div>
+    <button class="yes-btn" id="nextBtn1">التالي</button>
+  </div>
+
+  <!-- صفحة المحاولة مرة أخرى -->
+  <div id="tryAgainPage" class="page">
+    <div class="emoji">😢</div>
+    <h1>يبدو أنك لا تحبيني يا معودة!</h1>
+    <div class="message">لم تحصلي على النتيجة المطلوبة..</div>
+    <button class="yes-btn" id="restartBtn">إعادة المحاولة</button>
+  </div>
+
+  <!-- صفحة التأكيد -->
+  <div id="confirmationPage" class="page">
+    <div class="special-page">
+      <div class="emoji">💞</div>
+      <h1>تأكيد الحب</h1>
+      <div class="message">
+        يبدو أنني تأكدت من حبك لي..<br>
+        وأنا أيضاً أحبك يا معودة من كل قلبي ❤️
+      </div>
+      <button class="yes-btn" id="nextBtn2">التالي</button>
+    </div>
+  </div>
+
+  <!-- صفحة الفتاة المجهولة -->
+  <div id="mysteryPage" class="page">
+    <div class="special-page">
+      <div class="emoji">🕵️♀️</div>
+      <h1>رسالة إلى الفتاة المجهولة</h1>
+      <div class="message">
+        إلى من نقلت لي مشاعر سجى..<br><br>
+        شكراً لكِ أيتها الملاك الخفي،<br>
+        لقد جعلتِ قلبي يطير فرحاً!<br><br>
+        أتمنى لكِ كل السعادة في حياتك 💐
+      </div>
+      <button class="yes-btn" id="nextBtn3">التالي</button>
+    </div>
+  </div>
+
+  <!-- صفحة رويدا -->
+  <div id="rawdaPage" class="page">
+    <div class="special-page">
+      <div class="emoji">👭</div>
+      <h1>شكراً رويدا</h1>
+      <div class="message">
+        إلى بنت خال سجى الغالية..<br><br>
+        شكراً لكِ على كل ما تفعلينه من أجلنا،<br>
+        عارف اننا نزعج لكن اسفين مالنا غيرك 🥲
+        ترا بنستمر بازعاجك🙂 لكن مالي دخل سجى هي الي تزعجك😗
+      </div>
+      <button class="yes-btn" id="countdownBtn">التالي</button>
+    </div>
+  </div>
+
+  <!-- صفحة العد التنازلي -->
+  <div id="countdownPage" class="page">
+    <div class="special-page">
+      <div class="countdown-overlay" id="countdownOverlay">
+        <div class="countdown-circle">
+          <div class="circle-pulse"></div>
+          <div class="countdown-number" id="countdown">10</div>
+          <div class="countdown-text">المفاجأة قادمة...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- صفحة عيد الميلاد -->
+  <div id="birthdayPage" class="page">
+    <div class="special-page">
+      <div class="emoji">🎂</div>
+      <h1>عيد ميلاد سعيد يا سجى!</h1>
+      <div class="message">
+        ..<br><br> في هذا اليوم ابدع الله في خلق هذه الجميله التي مهما مرت السنين يبقى حبي لها بل يزداد في كل عام تكبر فيه كل عام و انتي بخير يا حبيبتي احبك كثيرًا آمل ان تكوني بخير طوال حياتك لا استطيع وصف مشاعري لك عن طريق الحروف فقط هناك مشاعر عميقه بداخلي لا استطيع التعبير عنها رغم انني لست بالقرب منك لا استطيع معانقتك ولا معايدتك من قرب فقط ثقي بي ليس هناك من يحبك كما احبك يا ملجأي الذي احب الذهاب إليه دائمًا
+ كل عام وأنتِ بخير<br>
+        كل عام وانتِ بخير ي "حبيبتي"💝<br><br>
+        من حبيبك الذي يحبك أكثر من أي شيء ❤️
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // متغيرات الاختبار
+    let currentQuestion = 1;
+    let score = 0;
+    const totalQuestions = 7;
+    const passingScore = 5;
+    
+    // عناصر DOM
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+    const nextBtn1 = document.getElementById('nextBtn1');
+    const nextBtn2 = document.getElementById('nextBtn2');
+    const nextBtn3 = document.getElementById('nextBtn3');
+    const countdownBtn = document.getElementById('countdownBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const answerBtns = document.querySelectorAll('.answer-btn');
+    
+    // تهيئة الأحداث
+    function init() {
+      yesBtn.addEventListener('click', startQuiz);
+      noBtn.addEventListener('mouseover', moveNoButton);
+      noBtn.addEventListener('click', moveNoButton);
+      nextBtn1.addEventListener('click', () => showPage('confirmationPage'));
+      nextBtn2.addEventListener('click', () => showPage('mysteryPage'));
+      nextBtn3.addEventListener('click', () => showPage('rawdaPage'));
+      countdownBtn.addEventListener('click', startCountdown);
+      restartBtn.addEventListener('click', restartQuiz);
+      
+      answerBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          checkAnswer(this);
+        });
+      });
+    }
+    
+    // بدء الاختبار
+    function startQuiz() {
+      showPage("quizPage");
+      updateProgress();
+    }
+    
+    // حركة زر لا
+    function moveNoButton() {
+      const x = Math.random() * (window.innerWidth - this.offsetWidth);
+      const y = Math.random() * (window.innerHeight - this.offsetHeight);
+      this.style.position = "absolute";
+      this.style.left = x + "px";
+      this.style.top = y + "px";
+    }
+    
+    // تغيير الصفحات
+    function showPage(pageId) {
+      document.querySelectorAll(".page").forEach(page => {
+        page.classList.remove("active");
+      });
+      document.getElementById(pageId).classList.add("active");
+    }
+    
+    // التحقق من الإجابة
+    function checkAnswer(selectedBtn) {
+      const questionDiv = selectedBtn.closest('.question');
+      const allButtons = questionDiv.querySelectorAll(".answer-btn");
+      
+      // تعطيل جميع الأزرار
+      allButtons.forEach(btn => {
+        btn.disabled = true;
+        if (btn.hasAttribute('data-correct')) {
+          btn.classList.add("correct");
+        } else if (btn === selectedBtn) {
+          btn.classList.add("wrong");
+        }
+      });
+      
+      // زيادة النتيجة إذا كانت الإجابة صحيحة
+      if (selectedBtn.hasAttribute('data-correct')) {
+        score++;
+      }
+      
+      // الانتقال للسؤال التالي أو النتيجة
+      setTimeout(() => {
+        if (currentQuestion < totalQuestions) {
+          document.getElementById(`q${currentQuestion}`).style.display = "none";
+          currentQuestion++;
+          document.getElementById(`q${currentQuestion}`).style.display = "block";
+          updateProgress();
+        } else {
+          showResult();
+        }
+      }, 1000);
+    }
+    
+    // تحديث شريط التقدم
+    function updateProgress() {
+      const progress = (currentQuestion / totalQuestions) * 100;
+      document.getElementById("progress").style.width = `${progress}%`;
+      document.getElementById("qCounter").textContent = `السؤال ${currentQuestion} من ${totalQuestions}`;
+    }
+    
+    // عرض النتيجة
+    function showResult() {
+      if (score >= passingScore) {
+        showPage("successPage");
+      } else {
+        showPage("tryAgainPage");
+      }
+    }
+    
+    // إعادة الاختبار
+    function restartQuiz() {
+      currentQuestion = 1;
+      score = 0;
+      
+      // إعادة تعيين الأسئلة
+      document.querySelectorAll(".question").forEach((q, i) => {
+        q.style.display = i === 0 ? "block" : "none";
+        const buttons = q.querySelectorAll(".answer-btn");
+        buttons.forEach(btn => {
+          btn.disabled = false;
+          btn.classList.remove("correct", "wrong");
+        });
+      });
+      
+      // إعادة تعيين التقدم
+      document.getElementById("progress").style.width = "0%";
+      document.getElementById("qCounter").textContent = `السؤال 1 من ${totalQuestions}`;
+      
+      showPage("mainPage");
+    }
+    
+    // إنشاء بتلات متحركة
+    function createPetals() {
+      const overlay = document.getElementById("countdownOverlay");
+      for (let i = 0; i < 15; i++) {
+        setTimeout(() => {
+          const petal = document.createElement("div");
+          petal.className = "floating-petal";
+          petal.style.left = Math.random() * 100 + "%";
+          petal.style.animationDuration = (Math.random() * 3 + 4) + "s";
+          petal.style.animationDelay = (Math.random() * 5) + "s";
+          petal.style.width = (Math.random() * 15 + 10) + "px";
+          petal.style.height = petal.style.width;
+          overlay.appendChild(petal);
+        }, i * 300);
+      }
+    }
+
+    // إنشاء بريق
+    function createSparkle() {
+      const circle = document.querySelector(".countdown-circle");
+      const sparkle = document.createElement("div");
+      sparkle.className = "sparkle";
+      sparkle.style.left = Math.random() * 80 + 10 + "%";
+      sparkle.style.top = Math.random() * 80 + 10 + "%";
+      sparkle.style.animationDelay = (Math.random() * 0.5) + "s";
+      circle.appendChild(sparkle);
+      
+      setTimeout(() => {
+        sparkle.remove();
+      }, 1500);
+    }
+
+    // العد التنازلي
+    function startCountdown() {
+      showPage("countdownPage");
+      createPetals();
+      
+      let count = 10;
+      const countdownElement = document.getElementById("countdown");
+      
+      const timer = setInterval(() => {
+        count--;
+        countdownElement.textContent = count;
+        
+        // تأثير نبض عند كل ثانية
+        countdownElement.style.transform = "scale(1.2)";
+        setTimeout(() => {
+          countdownElement.style.transform = "scale(1)";
+        }, 200);
+        
+        // إضافة بريق عشوائي
+        if(Math.random() > 0.5) createSparkle();
+        
+        if (count <= 0) {
+          clearInterval(timer);
+          
+          // المزيد من البريق عند النهاية
+          for(let i=0; i<10; i++) {
+            setTimeout(createSparkle, i * 150);
+          }
+          
+          setTimeout(() => {
+            showPage("birthdayPage");
+          }, 2000);
+        }
+      }, 1000);
+    }
+    
+    // تهيئة التطبيق عند تحميل الصفحة
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
